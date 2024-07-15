@@ -1,17 +1,41 @@
-[package]
-name = "vara-pebbles-game"
+[workspace.package]
+homepage = "https://wiki.gear-tech.io/docs/examples/prerequisites"
+authors = ["Gear Foundation <hello@gear.foundation>"]
 version = "0.1.0"
+license = "MIT"
 edition = "2021"
+publish = false
+
+[package]
+name = "pebbles-game"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
 
 [dependencies]
-gstd = { git = "https://github.com/gear-tech/gear.git", tag = "v1.4.1" }
-vara-pebbles-game.path = "io"
-
+gstd.workspace = true
+pebbles-game-io.workspace = true
 
 [build-dependencies]
-gear-wasm-builder = { git = "https://github.com/gear-tech/gear.git", tag = "v1.4.1" }
-vara-pebbles-game.path = "io"
+gear-wasm-builder.workspace = true
+pebbles-game-io.workspace = true
 
 [dev-dependencies]
-gtest = { git = "https://github.com/gear-tech/gear.git", tag = "v1.4.1" }
-vara-pebbles-game.path = "io"
+gtest.workspace = true
+pebbles-game-io.workspace = true
+
+[workspace]
+resolver = "2"
+members = [
+  "io",
+]
+
+[features]
+testr = []
+
+[workspace.dependencies]
+gstd = "1.4.1"
+gmeta = "1.4.1"
+gear-wasm-builder = "1.4.1"
+gtest = "1.4.1"
+pebbles-game-io.path = "io"
