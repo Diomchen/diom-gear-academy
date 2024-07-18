@@ -28,10 +28,20 @@ fn determine_program_action(pebbles_remaining: u32, max_pebbles_per_turn: u32, d
             block_number % max_pebbles_per_turn + 1
         },
         DifficultyLevel::Hard => {
-            // I don't kown the hard level
-            let block_number = get_random_u32();
-            debug!("random block_number:{:?}", block_number);
-            block_number % max_pebbles_per_turn + 1
+            if pebbles_remaining <= max_pebbles_per_turn {
+                pebbles_remaining
+            }
+            else {
+                for take in 1..=max_pebbles_per_turn{
+                    if (pebbles_remaining-take) % (max_pebbles_per_turn+1) == 0{
+                        return take;
+                    }
+                }
+
+                let block_number = get_random_u32();
+                debug!("random block_number:{:?}", block_number);
+                block_number % max_pebbles_per_turn + 1
+            }
         },
     }
 }
@@ -116,17 +126,10 @@ extern "C" fn handle(){
         },
         PebblesAction::GiveUp => {
             // do program's turn 
-            let program_turn = determine_program_action(game_state.pebbles_remaining, game_state.max_pebbles_per_turn, game_state.difficulty.clone());
-            game_state.pebbles_remaining -= program_turn;
-            debug!("USER giveup, after PROGRAM opt:{:?}", game_state);
-            if game_state.pebbles_remaining <= 0 {
-                let program = Player::Program;
-                game_state.winner = Some(program.clone());
-                debug!("USER giveup, after PROGRAM won:{:?}", game_state);
-                PebblesEvent::Won(program)
-            } else{
-                PebblesEvent::CounterTurn(program_turn)
-            }
+            let program = Player::Program;
+            game_state.winner = Some(program.clone());
+            debug!("USER giveup, after PROGRAM won:{:?}", game_state);
+            PebblesEvent::Won(program)
         },
         PebblesAction::Restart {difficulty, mut pebbles_count, max_pebbles_per_turn} => {
             
